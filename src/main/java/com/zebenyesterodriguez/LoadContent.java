@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.zebenyesterodriguez.model.PriceReduction;
 import com.zebenyesterodriguez.model.Product;
@@ -28,7 +29,10 @@ import com.zebenyesterodriguez.service.UserService;
 @Configuration
 public class LoadContent implements ApplicationRunner{
 
-	//TODO: crear servicees y sus implementaciones. Cambiar repositorios por los services.
+	@Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+	
+	//TODO: crear services y sus implementaciones. Cambiar repositorios por los services.
 	@Autowired
 	private RoleRepository repoRole;
 	
@@ -52,7 +56,7 @@ public class LoadContent implements ApplicationRunner{
 	
     @Override
     public void run(ApplicationArguments args) throws Exception {
-    	
+		
     	// Cargar el contenido estático para las pruebas
 //    	List<Supplier> suppliers = null;
 //    	List<PriceReduction> priceReductions = null;
@@ -84,17 +88,17 @@ public class LoadContent implements ApplicationRunner{
 //		repoSupplier.save(s7);
 //		
 //		// Estados del usuario en una tabla para poder añadir más e incluso traducciones
-//		Status st1 = new Status("Active");
-//		Status st2 = new Status("Discontinued");
+//		Status st1 = new Status(Status.ACTIVE, "Active");
+//		Status st2 = new Status(Status.DISCONTINUED, "Discontinued");
 //		
 //		repoStatus.save(st1);
 //		repoStatus.save(st2);
 //		
 //		// Usuarios
-//		User u1 = new User(r1, "Bitbox", "bitbox", "info@bitbox.com", "1234", new Date());
-//		User u2 = new User(r2, "Leonardo", "leo", "leo.c@bitbox.com", "1234", new Date());
-//		User u3 = new User(r2, "Óliver", "oli", "oli.d@bitbox.com", "1234", new Date());
-//		User u4 = new User(r2, "Adrián", "adri", "adri.m@bitbox.com", "1234", new Date());
+//		User u1 = new User(r1, "Bitbox", "bitbox", "info@bitbox.com", bCryptPasswordEncoder.encode("1234"), new Date());
+//		User u2 = new User(r2, "Leonardo", "leo", "leo.c@bitbox.com", bCryptPasswordEncoder.encode("1234"), new Date());
+//		User u3 = new User(r2, "Óliver", "oli", "oli.d@bitbox.com", bCryptPasswordEncoder.encode("1234"), new Date());
+//		User u4 = new User(r2, "Adrián", "adri", "adri.m@bitbox.com", bCryptPasswordEncoder.encode("1234"), new Date());
 //		
 //		userService.save(u1);
 //		userService.save(u2);

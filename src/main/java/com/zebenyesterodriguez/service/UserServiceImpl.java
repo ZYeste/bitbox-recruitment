@@ -3,7 +3,6 @@ package com.zebenyesterodriguez.service;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.zebenyesterodriguez.model.User;
@@ -13,10 +12,7 @@ import com.zebenyesterodriguez.repository.UserRepository;
 public class UserServiceImpl implements UserService {
 
 	@Autowired
-	private UserRepository userRepository;
-
-	@Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+	private UserRepository userRepository;	
 	
 	@Override
 	public User findById(Long id) {
@@ -34,8 +30,7 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public void save(User user) {		
-		user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+	public void save(User user) {	
         userRepository.save(user);
 	}
 

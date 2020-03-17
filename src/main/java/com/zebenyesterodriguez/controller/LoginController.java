@@ -26,7 +26,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 
 @RestController
 public class LoginController {
-	
+		
 	@Autowired
 	private UserService userService;
 	
@@ -38,7 +38,8 @@ public class LoginController {
 	public ResponseEntity<String> login(@RequestParam("user") String username, @RequestParam("password") String pwd) {
 		User user = null;
 		ResponseEntity<String> rEToken = null;
-
+		String error = "Usuario o contraseña incorrecta";
+		
 		// Comprobar que el usuario existe en bd 
 		Optional<User> u = userService.findByUsername(username);
 		if(u.isPresent()) {
@@ -51,16 +52,15 @@ public class LoginController {
 				String token = TokenUtils.authToToken(authorization);
 				
 				user.setToken(token);
-				// TODO: guardar el usuario para añadir su token
-//				userService.save(user);
+				userService.save(user);
 				
 				rEToken = new ResponseEntity<>(authorization, HttpStatus.OK);
 				
 			} else {
-				rEToken = new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+				rEToken = new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
 			}
 		} else {
-			rEToken = new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+			rEToken = new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
 		}
 		
 		return rEToken;

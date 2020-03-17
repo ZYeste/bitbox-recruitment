@@ -25,6 +25,12 @@ public class Status {
 		super();
 	}
 	
+	public Status(Long id, String description) {
+		super();
+		this.id = id;
+		this.description = description;
+	}
+	
 	public Status(String description) {
 		super();
 		this.description = description;

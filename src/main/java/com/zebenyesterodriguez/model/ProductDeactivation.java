@@ -42,7 +42,6 @@ public class ProductDeactivation {
 
 	public ProductDeactivation(Product product, User user, Date date, String reason) {
 		super();
-		this.id = id;
 		this.product = product;
 		this.user = user;
 		this.date = date;

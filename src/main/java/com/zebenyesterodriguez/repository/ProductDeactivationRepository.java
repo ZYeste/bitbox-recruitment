@@ -8,5 +8,6 @@ import com.zebenyesterodriguez.model.ProductDeactivation;
 
 public interface ProductDeactivationRepository extends JpaRepository<ProductDeactivation, Long>{	
 
+	ArrayList<ProductDeactivation> findByProduct_code(Long code);
 	
 }

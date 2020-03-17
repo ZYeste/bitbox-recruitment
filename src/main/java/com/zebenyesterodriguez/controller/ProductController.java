@@ -97,6 +97,7 @@ public class ProductController {
 
 		Optional<User> optionalUser = userService.findByToken(token);
 		Product product = productService.findById(code);
+		Status status = statusService.findById(Status.DISCONTINUED).get();
 		if(optionalUser.isPresent()) {
 			
 			productDeactivation.setUser(optionalUser.get());
@@ -104,7 +105,12 @@ public class ProductController {
 			productDeactivation.setDate(new Date());
 			productDeactivation.setReason(reason);
 			
+			// Insertar la desactivación del producto
 			productDeactivationService.save(productDeactivation);
+			
+			// Actualizar el estado del producto
+			product.setStatus(status);
+			productService.save(product);
 			
 			rEProductDeactivation = new ResponseEntity<>(productDeactivation, HttpStatus.OK);
 		} else {
