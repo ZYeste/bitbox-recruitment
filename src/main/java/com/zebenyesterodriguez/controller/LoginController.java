@@ -38,7 +38,7 @@ public class LoginController {
 	public ResponseEntity<String> login(@RequestParam("user") String username, @RequestParam("password") String pwd) {
 		User user = null;
 		ResponseEntity<String> rEToken = null;
-		String error = "Usuario o contraseña incorrecta";
+		String error = "Incorrect user or password";
 		
 		// Comprobar que el usuario existe en bd 
 		Optional<User> u = userService.findByUsername(username);

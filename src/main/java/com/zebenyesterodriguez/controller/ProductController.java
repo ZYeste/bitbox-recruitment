@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,9 +43,50 @@ public class ProductController {
 	@Autowired
 	private StatusService statusService;
 	
+	@PostMapping("products/add")
+	@CrossOrigin(origins = "*", methods= {RequestMethod.POST})
+	public ResponseEntity<Object> addProduct(@RequestHeader(value="Authorization") String authorizationHeader, @RequestParam("description") String description) {
+		
+		ResponseEntity<Object> rEProduct = null;
+		String token = TokenUtils.authToToken(authorizationHeader);
+		Status s = statusService.findById(Status.ACTIVE).get();
+		Product p = new Product();
+		Optional<User> optional = userService.findByToken(token);
+		User u = null;
+				
+		if(optional.isPresent()){
+			if(description.isEmpty()){
+				rEProduct = new ResponseEntity<>("Empty product description", HttpStatus.FORBIDDEN);
+			} else {
+				
+				u = optional.get();
+				
+				p.setDescription(description);
+				p.setCreationDate(new Date());
+				p.setUser(u);
+				p.setStatus(s);
+				p.setPrice(0);
+				
+				productService.save(p);
+				
+				rEProduct = new ResponseEntity<>(p, HttpStatus.OK);
+			}
+		} else {
+			rEProduct = new ResponseEntity<>("Invalid security token", HttpStatus.FORBIDDEN);
+		}
+		
+		return rEProduct;
+	}
+	
+	@GetMapping("products/{code}")
+	@CrossOrigin(origins = "*", methods= {RequestMethod.GET,RequestMethod.POST})
+	public Product getProduct(@PathVariable Long code) {		
+		return productService.findById(code);
+	}
+
 	@GetMapping("products")
 	@CrossOrigin(origins = "*", methods= {RequestMethod.GET}, allowedHeaders = "*", allowCredentials = "true")
-	public ResponseEntity<Object> product(@RequestParam(value="status", required=false) Long status) {
+	public ResponseEntity<Object> getProducts(@RequestParam(value="status", required=false) Long status) {
 		
 		ResponseEntity<Object> rEProduct = null;
 		List<Product> products = null;
@@ -59,34 +102,6 @@ public class ProductController {
 		return rEProduct;
 	}
 	
-	@PostMapping("products")
-	@CrossOrigin(origins = "*", methods= {RequestMethod.POST})
-	public ResponseEntity<Product> createProduct(@RequestParam("description") String description) {
-		
-		ResponseEntity<Product> rEProduct = null;
-		User u = userService.findById(1l);
-		Status s = statusService.findById(Status.ACTIVE).get();
-		Product p = new Product();
-		
-		p.setDescription(description);
-		p.setCreationDate(new Date());
-		p.setUser(u);
-		p.setStatus(s);
-		p.setPrice(9);
-		
-		productService.save(p);
-		
-		rEProduct = new ResponseEntity<>(p, HttpStatus.OK);
-		
-		return rEProduct;
-	}
-	
-	@GetMapping("products/{code}")
-	@CrossOrigin(origins = "*", methods= {RequestMethod.GET,RequestMethod.POST})
-	public Product getProduct(@PathVariable Long code) {		
-		return productService.findById(code);
-	}
-
 	@PostMapping("product/deactivate")
 	@CrossOrigin(origins = "*", methods= {RequestMethod.POST})
 	public ResponseEntity<ProductDeactivation> deactivateProduct(@RequestHeader("Authorization") String authorization, @RequestParam("code") Long code, @RequestParam("reason") String reason) {
